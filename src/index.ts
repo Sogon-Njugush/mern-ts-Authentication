@@ -7,6 +7,7 @@ import connectDB from "./database/database";
 import { errorHandler } from "./middlewares/errorHandler";
 import { HTTPSTATUS } from "./config/http.config";
 import { asyncHandler } from "./middlewares/asyncHandler";
+import { InternalServerException } from "./common/utils/catch-errors";
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -24,7 +25,7 @@ app.use(
 app.get(
   "/",
   asyncHandler(async (req, res) => {
-    //throw new Error("Test error");
+    throw new InternalServerException("Something went wrong");
     res.status(HTTPSTATUS.OK).json({ message: "Hello World!" });
   })
 );
