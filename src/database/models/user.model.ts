@@ -1,9 +1,9 @@
-import mongoose, { Document, mongo, Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 import { compareValue, hashValue } from "../../common/utils/hash";
 
 interface UserPreferences {
   enable2FA: boolean;
-  emailNotifications: boolean;
+  emailNotification: boolean;
   twoFactorSecret?: string;
 }
 
@@ -18,9 +18,9 @@ export interface UserDocument extends Document {
   comparePassword(value: string): Promise<boolean>;
 }
 
-const userPreferencesSchema = new Schema({
+const userPreferencesSchema = new Schema<UserPreferences>({
   enable2FA: { type: Boolean, default: false },
-  emailNotifications: { type: Boolean, default: true },
+  emailNotification: { type: Boolean, default: true },
   twoFactorSecret: { type: String, required: false },
 });
 
@@ -40,7 +40,7 @@ const userSchema = new Schema<UserDocument>(
 
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
-    this.password = await hashValue(this.password, 10);
+    this.password = await hashValue(this.password);
   }
   next();
 });

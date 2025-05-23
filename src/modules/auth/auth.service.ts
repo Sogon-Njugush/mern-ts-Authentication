@@ -11,9 +11,12 @@ export class AuthService {
     const { name, email, password } = registerData;
 
     const existingUser = await UserModel.exists({ email });
+
     if (existingUser) {
-      throw new BadRequestException("User already exists");
-      ErrorCode.AUTH_EMAIL_ALREADY_EXISTS;
+      throw new BadRequestException(
+        "User already exists",
+        ErrorCode.AUTH_EMAIL_ALREADY_EXISTS
+      );
     }
 
     const newUser = await UserModel.create({
@@ -24,7 +27,7 @@ export class AuthService {
 
     const userId = newUser._id;
     // create a verification code for the user
-    const verificationCode = await VerificationCodeModel.create({
+    const verification = await VerificationCodeModel.create({
       userId,
       type: VerificationEnum.EMAIL_VERIFICATION,
       expiresAt: fortyFiveMinutesFromNow(),

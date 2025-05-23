@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { VerificationEnum } from "../../common/enums/verification-code.enum";
 import { generateUniqueCode } from "../../common/utils/uuid";
 
@@ -12,7 +12,7 @@ export interface VerificationCodeDocument extends Document {
 
 const verificationCodeSchema = new Schema<VerificationCodeDocument>({
   userId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "User",
     index: true,
     required: true,
@@ -40,6 +40,7 @@ const verificationCodeSchema = new Schema<VerificationCodeDocument>({
 
 const VerificationCodeModel = mongoose.model<VerificationCodeDocument>(
   "VerificationCode",
-  verificationCodeSchema
+  verificationCodeSchema,
+  "verification_codes"
 );
 export default VerificationCodeModel;
