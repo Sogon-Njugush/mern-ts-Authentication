@@ -21,6 +21,8 @@ import {
   signJwtToken,
   verifyJwtToken,
 } from "../../common/utils/jwt";
+import { sendEmail } from "../../mailers/mailer";
+import { verifyEmailTemplate } from "../../mailers/templates/template";
 
 export class AuthService {
   public async register(registerData: RegisterDto) {
@@ -49,6 +51,11 @@ export class AuthService {
       expiresAt: fortyFiveMinutesFromNow(),
     });
     //send verification email link
+    const verificationUrl = `${config.APP_ORIGIN}/confirm-account?code=${verification.code}`;
+    await sendEmail({
+      to: newUser.email,
+      ...verifyEmailTemplate(verificationUrl),
+    });
     return { user: newUser };
   }
 
