@@ -5,6 +5,8 @@ import cors from "cors";
 import { config } from "./config/app.config";
 import connectDB from "./database/database";
 import { errorHandler } from "./middlewares/errorHandler";
+import { HTTPSTATUS } from "./config/http.config";
+import { asyncHandler } from "./middlewares/asyncHandler";
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -19,9 +21,13 @@ app.use(
   }) // for parsing application/x-www-form-urlencoded
 );
 
-app.get("/", (req, res) => {
-  res.status(200).json({ message: "Hello World!" });
-});
+app.get(
+  "/",
+  asyncHandler(async (req, res) => {
+    //throw new Error("Test error");
+    res.status(HTTPSTATUS.OK).json({ message: "Hello World!" });
+  })
+);
 
 //error handling
 app.use(errorHandler);
