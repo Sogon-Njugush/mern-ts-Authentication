@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { config } from "./config/app.config";
 import connectDB from "./database/database";
+import { errorHandler } from "./middlewares/errorHandler";
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -21,6 +22,9 @@ app.use(
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Hello World!" });
 });
+
+//error handling
+app.use(errorHandler);
 
 app.listen(config.PORT, async () => {
   console.log(
