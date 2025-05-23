@@ -1,8 +1,12 @@
 import { Request, Response } from "express";
-import { registerSchema } from "../../common/validators/auth.validator";
+import {
+  loginSchema,
+  registerSchema,
+} from "../../common/validators/auth.validator";
 import { HTTPSTATUS } from "../../config/http.config";
 import { asyncHandler } from "../../middlewares/asyncHandler";
 import { AuthService } from "./auth.service";
+import { setAuthenticationCookies } from "../../common/utils/cookie";
 
 export class AuthController {
   private authService: AuthService;
@@ -21,6 +25,23 @@ export class AuthController {
         message: "User registered successfully",
         data: user,
       });
+    }
+  );
+
+  public login = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const userAgent = req.headers["user-agent"];
+      const body = loginSchema.parse({ ...req.body, userAgent });
+      const { user, accessToken, refreshToken, mfaRequired } =
+        await this.authService.login(body);
+
+      return setAuthenticationCookies({ res, accessToken, refreshToken })
+        .status(HTTPSTATUS.OK)
+        .json({
+          message: "User logged in successfully",
+          mfaRequired,
+          user,
+        });
     }
   );
 }
