@@ -141,4 +141,31 @@ export class AuthService {
       newRefreshToken,
     };
   }
+
+  public async verifyEmail(code: string) {
+    const validCode = await VerificationCodeModel.findOne({
+      code: code,
+      type: VerificationEnum.EMAIL_VERIFICATION,
+      expiresAt: { $gt: Date.now() },
+    });
+    if (!validCode) {
+      throw new BadRequestException("Invalid code", ErrorCode.VALIDATION_ERROR);
+    }
+
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      validCode.userId,
+      {
+        isEmailVerified: true,
+      },
+      { new: true }
+    );
+    if (!updatedUser) {
+      throw new BadRequestException(
+        "User not found",
+        ErrorCode.VALIDATION_ERROR
+      );
+    }
+    await validCode.deleteOne();
+    return { user: updatedUser };
+  }
 }
