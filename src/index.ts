@@ -5,9 +5,9 @@ import cors from "cors";
 import { config } from "./config/app.config";
 import connectDB from "./database/database";
 import { errorHandler } from "./middlewares/errorHandler";
-import { HTTPSTATUS } from "./config/http.config";
-import { asyncHandler } from "./middlewares/asyncHandler";
-import { InternalServerException } from "./common/utils/catch-errors";
+
+//routes
+import authRoutes from "./modules/auth/auth.routes";
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -22,14 +22,7 @@ app.use(
   }) // for parsing application/x-www-form-urlencoded
 );
 
-app.get(
-  "/",
-  asyncHandler(async (req, res) => {
-    throw new InternalServerException("Something went wrong");
-    res.status(HTTPSTATUS.OK).json({ message: "Hello World!" });
-  })
-);
-
+app.use(`${BASE_PATH}/auth`, authRoutes);
 //error handling
 app.use(errorHandler);
 
