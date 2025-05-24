@@ -8,19 +8,23 @@ import { errorHandler } from "./middlewares/errorHandler";
 
 //routes
 import authRoutes from "./modules/auth/auth.routes";
+import passport from "./middlewares/passport";
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
 
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-app.use(cookieParser()); // for parsing cookies
 app.use(
   cors({
     origin: config.APP_ORIGIN,
     credentials: true,
   }) // for parsing application/x-www-form-urlencoded
 );
+
+app.use(cookieParser()); // for parsing cookies
+//initialize passport
+app.use(passport.initialize());
 
 app.use(`${BASE_PATH}/auth`, authRoutes);
 //error handling
