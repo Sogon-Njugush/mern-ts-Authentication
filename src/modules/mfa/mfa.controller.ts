@@ -37,8 +37,8 @@ export class MfaController {
     );
 
     return res.status(HTTPSTATUS.OK).json({
-      message,
-      userPreferences,
+      message:message,
+      userPreferences:userPreferences,
     });
   });
 
